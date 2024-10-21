@@ -3,9 +3,6 @@ from .categoria import Categoria
 from .editora import Editora
 from .autor import Autor
 
-
-
-
     
 
 class Livro(models.Model):
