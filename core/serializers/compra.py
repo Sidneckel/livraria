@@ -1,4 +1,4 @@
-from rest_framework.serializers import CharField, ModelSerializer, SerializerMethodField,CurrentUserDefault,HiddenField,ValidationError
+from rest_framework.serializers import CharField, ModelSerializer, DateTimeField, SerializerMethodField,CurrentUserDefault,HiddenField,ValidationError
 from core.models import Compra, ItensCompra
 
 
@@ -42,12 +42,13 @@ class ItensCompraListSerializer(ModelSerializer):
 class CompraSerializer(ModelSerializer):
     usuario = CharField(source="usuario.email", read_only=True) # inclua essa linha
     status = CharField(source="get_status_display", read_only=True) # inclua essa linha
+    data = DateTimeField(read_only=True)
     itens = ItensCompraSerializer(many=True, read_only=True)
     
     class Meta:
         model = Compra
         #fields = "__all__"
-        fields = ("id", "usuario", "status", "total", "itens")
+        fields = ("id", "usuario", "status", "total", "data", "itens")
 
 
 
