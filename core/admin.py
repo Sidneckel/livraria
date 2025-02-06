@@ -6,7 +6,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 from core import models
-from core.models import Autor, Categoria, Editora, Livro, User, Compra, ItensCompra
+from core.models import Autor, Categoria, Editora, Livro, User, Compra, ItensCompra, Favorito
+from core.models import Favorito, Livro
 
 
 @admin.register(User)
@@ -51,12 +52,6 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
-
-# admin.site.register(models.User, UserAdmin)
-# admin.site.register(models.Categoria)
-# admin.site.register(models.Editora)
-# admin.site.register(models.Autor)
-# admin.site.register(models.Livro)
 
 
 @admin.register(Autor)
@@ -107,3 +102,28 @@ class CompraAdmin(admin.ModelAdmin):
     inlines = [ItensCompraInline]
 
 admin.site.register(ItensCompra)
+
+
+
+class FavoritosInline(admin.TabularInline):
+    model = Favorito
+    extra = 1  # Número de linhas extras que aparecerão
+    fields = ['livro',  ]  # Campos que aparecerão no inline
+
+    def get_formset(self, request, obj=None, **kwargs):
+        """Filtra os livros disponíveis no admin de favoritos."""
+        formset = super().get_formset(request, obj, **kwargs)
+        if obj:
+            formset.form.base_fields['livro'].queryset = Livro.objects.all()  # Limita aos livros existentes
+        return formset
+
+@admin.register(Favorito)
+class FavoritosAdmin(admin.ModelAdmin):
+    list_display = ('livro',)
+    search_fields = ('livro',)
+    list_filter = ('livro',)
+    ordering = ('livro',)
+    list_per_page = 10
+    # inlines = [FavoritosInline]  # Permite a inclusão de itens aos favoritos diretamente
+
+
